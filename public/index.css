@@ -148,7 +148,7 @@ footer a {
   border: 1px solid #333;  /* Darker border */
   border-radius: 5px;
   padding-top: 20px;
-  text-align: left;
+  text-align: center;
   padding: 24px;
   background-color: rgba(30, 30, 40, 0.9);  /* Dark semi-transparent background */
 }
@@ -181,18 +181,16 @@ footer a {
 
 .statusTitle {
   text-transform: uppercase;
+  align-items: center;
 }
 
 .statusHeader {
-  display: flex;
-  flex-direction: row;
   align-items: center;
   margin-bottom: 2px;
 }
 
 .statusSubtitle {
   display: flex;
-  flex-direction: row;
   align-items: center;
   margin-bottom: 12px;
 }
@@ -203,7 +201,6 @@ footer a {
   border-radius: 15px;
   font-size: 12px;
   font-weight: 700;
-  margin-left: 12px;
 }
 
 .statusUptime {

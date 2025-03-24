@@ -10,8 +10,8 @@ const port = 3030;
 // Serve static files (HTML, CSS, JS, etc.)
 app.use(express.static(path.join(__dirname, 'public')));
 
-// Run health check script every minute '30 * * * *' cada 30 minutos --'*/10 * * * *' cada 10 minutos
-cron.schedule('*/10 * * * *', () => {
+// Run health check script every minute
+cron.schedule('* * * * *', () => {
   exec('./health-check.sh', (error, stdout, stderr) => {
     if (error) {
       console.error(`exec error: ${error}`);
