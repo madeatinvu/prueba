@@ -118,15 +118,14 @@ footer a {
   background-color: rgba(20, 20, 30, 0.8);  /* Semi-transparent dark blueish background */
   box-shadow: 0px 6px 18px rgba(0, 0, 0, 0.2);
   border-radius: 5px;
-  max-width: 900px;
   width: 100%;
-  margin: 96px auto;
 }
 
 .headline {
   display: flex;
   align-items: center;
   justify-content: center;
+  margin-bottom: 15px;
 }
 
 .headline span {
@@ -140,8 +139,9 @@ footer a {
 }
 
 .reportContainer {
-  margin: 30px auto;
-  width: 100%;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 20px;
 }
 
 .statusContainer {
@@ -155,7 +155,7 @@ footer a {
 
 .statusContainer + .statusContainer {
   border-top: 1px solid #444;  /* Lighter border between status items */
-  margin-top: 30px;
+  
 }
 
 .statusStreamContainer {
