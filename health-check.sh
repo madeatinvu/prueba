@@ -4,25 +4,17 @@ KEYSARRAY=()
 URLSARRAY=()
 
 urlsConfig="$(pwd)/urls.cfg"
-echo "Reading $urlsConfig"
 while read -r line
 do
-  echo "  $line"
   IFS='=' read -ra TOKENS <<< "$line"
   KEYSARRAY+=(${TOKENS[0]})
   URLSARRAY+=(${TOKENS[1]})
 done < "$urlsConfig"
 
-echo "***********************"
-echo "Starting health checks with ${#KEYSARRAY[@]} configs:"
-
-mkdir -p public/logs
-
 for (( index=0; index < ${#KEYSARRAY[@]}; index++))
 do
   key="${KEYSARRAY[index]}"
   url="${URLSARRAY[index]}"
-  echo "  $key=$url"
 
   for i in 1 2 3 4; 
   do
@@ -38,5 +30,5 @@ do
     sleep 5
   done
   dateTime=$(date +'%Y-%m-%d %H:%M')
-  echo $dateTime, $result >> "public/logs/${key}_report.log"
+  echo "$url,$dateTime,$result"
 done

@@ -2,6 +2,12 @@
   box-sizing: border-box;
 }
 
+html, body {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+
 html {
   height: 100%;
   display: flex;
@@ -141,8 +147,10 @@ footer a {
 .reportContainer {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
+  /* grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); /*cards tamano*/
   gap: 20px;
 }
+
 
 .statusContainer {
   border: 1px solid #333;  /* Darker border */
