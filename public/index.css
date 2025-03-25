@@ -146,11 +146,9 @@ footer a {
 
 .reportContainer {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  /* grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); /*cards tamano*/
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); /* Responsive grid layout */
   gap: 20px;
 }
-
 
 .statusContainer {
   border: 1px solid #333;  /* Darker border */
@@ -163,7 +161,6 @@ footer a {
 
 .statusContainer + .statusContainer {
   border-top: 1px solid #444;  /* Lighter border between status items */
-  
 }
 
 .statusStreamContainer {
@@ -242,7 +239,6 @@ footer a {
   background-color: #f44336; /* Failure red */
   color: #fff;
 }
-
 
 .nodata {
   background-color: #f8f8f8;
@@ -344,5 +340,17 @@ footer a {
   .statusSquare {
     min-width: 4px;
     width: 100%;
+  }
+}
+
+@media screen and (min-width: 1200px) {
+  .reportContainer {
+    grid-template-columns: repeat(4, 1fr); /* 4 columns for large screens */
+  }
+}
+
+@media screen and (min-width: 1600px) {
+  .reportContainer {
+    grid-template-columns: repeat(6, 1fr); /* 6 columns for very large screens */
   }
 }

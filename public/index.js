@@ -2,7 +2,7 @@ console.log("index.js loaded");
 
 const maxDays = 7;
 
-async function genReportLog(container, key, url) {
+async function genReportLog(key, url) {
   const response = await fetch("/status");
   let statusLines = "";
   if (response.ok) {
@@ -20,7 +20,7 @@ async function genReportLog(container, key, url) {
   const normalized = normalizeData(statusLines);
   console.log("Normalized data:", normalized); // Debugging log
   const statusStream = constructStatusStream(key, url, normalized);
-  container.appendChild(statusStream);
+  return statusStream;
 }
 
 function constructStatusStream(key, url, uptimeData) {
@@ -42,6 +42,7 @@ function constructStatusStream(key, url, uptimeData) {
   });
 
   container.appendChild(streamContainer);
+  container.dataset.priority = getPriority(color);
   return container;
 }
 
@@ -60,6 +61,10 @@ function getColor(uptimeVal) {
     : uptimeVal < 0.3
     ? "failure"
     : "partial";
+}
+
+function getPriority(color) {
+  return color === "failure" ? 1 : color === "partial" ? 2 : 3;
 }
 
 function constructStatusSquare(key, date, uptimeVal) {
@@ -254,6 +259,7 @@ async function genAllReports() {
   const response = await fetch("/urls");
   const configText = await response.text();
   const configLines = configText.split("\n");
+  const containers = [];
   for (let ii = 0; ii < configLines.length; ii++) {
     const configLine = configLines[ii];
     const [key, url] = configLine.split("=");
@@ -261,6 +267,16 @@ async function genAllReports() {
       continue;
     }
 
-    await genReportLog(document.getElementById("reports"), key, url);
+    const container = await genReportLog(key, url);
+    containers.push(container);
   }
+
+  // Sort containers by priority
+  containers.sort((a, b) => a.dataset.priority - b.dataset.priority);
+
+  // Append sorted containers to the DOM
+  const reportsContainer = document.getElementById("reports");
+  containers.forEach(container => {
+    reportsContainer.appendChild(container);
+  });
 }
