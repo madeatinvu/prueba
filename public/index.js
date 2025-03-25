@@ -126,7 +126,7 @@ function getStatusText(color) {
   return color == "nodata"
     ? "No Data Available"
     : color == "success"
-    ? "Fully Operational"
+    ? "Operational"
     : color == "failure"
     ? "Major Outage"
     : color == "partial"
