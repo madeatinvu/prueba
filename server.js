@@ -27,11 +27,6 @@ db.connect((err) => {
 // Serve static files (HTML, CSS, JS, etc.)
 app.use(express.static(path.join(__dirname, 'public')));
 
-// Function to sanitize table names
-function sanitizeTableName(name) {
-  return name.replace(/[^a-zA-Z0-9_]/g, '_');
-}
-
 // Run health check script every minute
 cron.schedule('* * * * *', () => {
   exec('./health-check.sh', (error, stdout, stderr) => {
@@ -45,14 +40,13 @@ cron.schedule('* * * * *', () => {
     // Process each line of the output
     const lines = stdout.trim().split('\n');
     lines.forEach(line => {
-      const [url, dateTime, result] = line.split(',');
-      const sanitizedTableName = sanitizeTableName(url);
+      const [key, dateTime, result] = line.split(','); // Removed URL
+      const tableName = key; // Use key directly as table name
 
-      // Create table for the URL if it doesn't exist
+      // Create table for the key if it doesn't exist
       const createTableQuery = `
-        CREATE TABLE IF NOT EXISTS ${sanitizedTableName} (
+        CREATE TABLE IF NOT EXISTS ${tableName} (
           id INT AUTO_INCREMENT PRIMARY KEY,
-          url VARCHAR(255) NOT NULL,
           created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
           result VARCHAR(50) NOT NULL
         )
@@ -64,13 +58,13 @@ cron.schedule('* * * * *', () => {
         }
 
         // Insert the result into the corresponding table
-        const insertQuery = `INSERT INTO ${sanitizedTableName} (url, created_at, result) VALUES (?, ?, ?)`;
-        db.query(insertQuery, [url, dateTime, result], (err, results) => {
+        const insertQuery = `INSERT INTO ${tableName} (created_at, result) VALUES (?, ?)`;
+        db.query(insertQuery, [dateTime, result], (err, results) => {
           if (err) {
             console.error('Error inserting into database: ' + err.stack);
             return;
           }
-          console.log(`Inserted health check result into database for URL: ${url}`);
+          console.log(`Inserted health check result into database for key: ${key}`);
         });
       });
     });
@@ -100,17 +94,23 @@ app.get('/status', (req, res) => {
     const tableNames = tables.map(table => Object.values(table)[0]);
     const results = [];
 
-    tableNames.forEach((tableName, index) => {
+    let processedTables = 0;
+    tableNames.forEach((tableName) => {
       const tableQuery = `SELECT * FROM ${tableName}`;
       db.query(tableQuery, (err, tableResults) => {
         if (err) {
           console.error('Error querying table: ' + err.stack);
+          processedTables++;
           return;
         }
 
-        results.push(...tableResults);
+        // Add the table name (key) to each result
+        tableResults.forEach(row => {
+          results.push({ key: tableName, ...row });
+        });
 
-        if (index === tableNames.length - 1) {
+        processedTables++;
+        if (processedTables === tableNames.length) {
           res.json(results);
         }
       });

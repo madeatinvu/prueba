@@ -9,7 +9,7 @@ async function genReportLog(key, url) {
     const data = await response.json();
     console.log("Fetched data:", data); // Debugging log
     statusLines = data
-      .filter((entry) => entry.url === url)
+      .filter((entry) => entry.key === key) // Filter by key
       .map((entry) => `${entry.created_at},${entry.result}`)
       .join("\n");
     console.log("Filtered status lines:", statusLines); // Debugging log

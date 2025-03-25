@@ -6,9 +6,10 @@ URLSARRAY=()
 urlsConfig="$(pwd)/urls.cfg"
 while read -r line
 do
-  IFS='=' read -ra TOKENS <<< "$line"
-  KEYSARRAY+=(${TOKENS[0]})
-  URLSARRAY+=(${TOKENS[1]})
+  key="${line%%=*}" # Extract everything before the first '=' as the key
+  url="${line#*=}"  # Extract everything after the first '=' as the URL
+  KEYSARRAY+=("$key")
+  URLSARRAY+=("$url")
 done < "$urlsConfig"
 
 for (( index=0; index < ${#KEYSARRAY[@]}; index++))
@@ -18,7 +19,7 @@ do
 
   for i in 1 2 3 4; 
   do
-    response=$(curl --write-out '%{http_code}' --silent --output /dev/null $url)
+    response=$(curl --write-out '%{http_code}' --silent --output /dev/null "$url")
     if [ "$response" -eq 200 ] || [ "$response" -eq 202 ] || [ "$response" -eq 301 ] || [ "$response" -eq 302 ] || [ "$response" -eq 307 ]; then
       result="success"
     else
@@ -30,5 +31,5 @@ do
     sleep 5
   done
   dateTime=$(date +'%Y-%m-%d %H:%M')
-  echo "$url,$dateTime,$result"
+  echo "$key,$dateTime,$result"
 done
